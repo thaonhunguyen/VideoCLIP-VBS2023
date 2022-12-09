@@ -1,0 +1,7 @@
+name: videoclip-vbs2023
+
+dependencies:
+  - python=3.8
+  - tqdm
+  - clip
+  
