@@ -35,16 +35,18 @@ FEATURE_DICT_PATH = osp.join(EMBEDDING_PATH, f'L14_336_features_128.pkl')
 FEATURE_PATH = osp.join(EMBEDDING_PATH, f'L14_336_features_128')
 
 class dataset():
-    def __init__(self, dataset_name=DATASET_NAME, src_path=''):
+    def __init__(self, dataset_name=DATASET_NAME, src_path='', dataset_path=None, image_name_path=None):
         self.src_path = src_path
         self.image_names = None
         self.dataset_name = dataset_name
+        self.image_name_path = image_name_path
+        self.dataset_path = dataset_path
         if self.dataset_name == 'V3C':
             self.extension = '.png'
         elif self.dataset_name == 'marine':
             self.extension = '.jpg'
 
-    def get_file_name(self, load_file=True, image_name_path=None, dataset_path=None):
+    def get_file_name(self, load_file=True):
         '''
         Function to get a list of images' names from the source path in ascending order
         
@@ -54,7 +56,10 @@ class dataset():
         '''
         if load_file==True:
             print("Loading all image names ...")
-            self.image_names = joblib.load(image_name_path)
+            print(self.image_name_path)
+            # self.image_names = joblib.load(self.image_name_path)
+            with open(self.image_name_path, 'r') as file:
+                self.image_names = file.read().splitlines()
             
         else:
             print("Getting all image names from the source path ...")
@@ -66,17 +71,17 @@ class dataset():
                 # self.image_names = sort_list(image_names)
                 # joblib.dump(self.image_names, IMAGE_NAME_PATH)
 #                 self.image_names = filenames
-                frame_path = osp.join(dataset_path, "information/selected_frames")
+                frame_path = osp.join(self.dataset_path, "information/selected_frames")
                 frame_ids = utils.sort_list(os.listdir(frame_path))
                 self.image_names = [osp.join(frame_path, filename) for filename in frame_ids if self.extension in filename]
             elif self.dataset_name == 'V3C':
                 self.image_names = []
-                folder_names = utils.sort_list(os.listdir(dataset_path))
+                folder_names = utils.sort_list(os.listdir(self.dataset_path))
                 for folder in tqdm(folder_names[:10]):
-                    folder_path = osp.join(dataset_path, folder)
+                    folder_path = osp.join(self.dataset_path, folder)
                     filenames = utils.sort_list(os.listdir(folder_path))
                     self.image_names.extend([osp.join(folder_path, filename) for filename in filenames if self.extension in filename])
-
+            utils.save_list_to_txt(self.image_names, self.image_name_path)
 
 # Define the CLIP encoding model class
 class CLIP():
@@ -123,9 +128,10 @@ class CLIP():
 
 
 class CLIPSearchEngine():
-    def __init__(self, dataset_name=DATASET_NAME, src_path='', feature_path='', batch_size=16, generate_features=False):
+    def __init__(self, dataset_name=DATASET_NAME, src_path='', feature_path='', dataset_path='', image_name_path='', batch_size=16, generate_features=False):
         self.dataset_name = dataset_name
-        self.dataset = dataset(dataset_name=self.dataset_name, src_path=src_path)
+        self.src_path = src_path
+        self.dataset = dataset(dataset_name=self.dataset_name, src_path=self.src_path, dataset_path=dataset_path, image_name_path=dataset_path)
         self.clip_model = CLIP()
         self.feature_dict = {}
         self.features = None
@@ -175,6 +181,7 @@ class CLIPSearchEngine():
         '''
         
         if self.dataset.image_names is None:
+            print("Get all filenames")
             self.dataset.get_file_name()
         
         # Compute how many batches are needed
@@ -320,12 +327,12 @@ def display_results(image_list=None, figsize=(15, 15), subplot_size=(5, 3)):
 #             print('Can\'t find best matched images.')
 
 
-if __name__=='__main__':
-    data = dataset(dataset_name=DATASET_NAME)
-    if data.dataset_name == 'marine':
-        dataset_path = osp.join(DISK_PATH, VBS_PATH, MARINE_PATH, MARINE_VIDEO_PATH)
-    elif data.dataset_name == 'V3C':
-        dataset_path = osp.join(DISK_PATH, VBS_PATH, V3C_KEYFRAME_DATA_PATH, 'keyframes')
-    data.get_file_name(load_file=False, dataset_path=dataset_path)
-    print(data.image_names[:10])
-    clip_model = CLIPSearchEngine(data.dataset_name, src_path=osp.join(DISK_PATH, VBS_PATH), feature_path=FEATURE_PATH, generate_features=True)
+# if __name__=='__main__':
+#     data = dataset(dataset_name=DATASET_NAME)
+#     if data.dataset_name == 'marine':
+#         dataset_path = osp.join(DISK_PATH, VBS_PATH, MARINE_PATH, MARINE_VIDEO_PATH)
+#     elif data.dataset_name == 'V3C':
+#         dataset_path = osp.join(DISK_PATH, VBS_PATH, V3C_KEYFRAME_DATA_PATH, 'keyframes')
+#     data.get_file_name(load_file=False, dataset_path=dataset_path)
+#     print(data.image_names[:10])
+#     clip_model = CLIPSearchEngine(data.dataset_name, src_path=osp.join(DISK_PATH, VBS_PATH), feature_path=FEATURE_PATH, generate_features=True)
