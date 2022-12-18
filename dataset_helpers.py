@@ -15,11 +15,11 @@ import os
 import os.path as osp
 import numpy as np
 import pandas as pd
-import utils
+import helpers
 
 
 # DATASET_NAME = "V3C"
-DATASET_NAME = "marine"
+# DATASET_NAME = "marine"
 
 MASTER_PATH = "/mnt/4TBSSD/ntnhu/"
 DISK_PATH = "/mnt/shared_48tb/"
@@ -30,12 +30,10 @@ V3C_KEYFRAME_DATA_PATH = "VBS2022"
 V3C1_VIDEO_DATA_PATH = "V3C1_videos"
 V3C2_VIDEO_DATA_PATH = "V3C2_videos"
 
-EMBEDDING_PATH = osp.join(DISK_PATH, VBS_PATH, 'embedding_features')
-FEATURE_DICT_PATH = osp.join(EMBEDDING_PATH, f'L14_336_features_128.pkl')
-FEATURE_PATH = osp.join(EMBEDDING_PATH, f'L14_336_features_128')
+
 
 class dataset():
-    def __init__(self, dataset_name=DATASET_NAME, src_path='', dataset_path=None, image_name_path=None):
+    def __init__(self, dataset_name='', src_path='', dataset_path=None, image_name_path=None):
         self.src_path = src_path
         self.image_names = None
         self.dataset_name = dataset_name
@@ -72,16 +70,16 @@ class dataset():
                 # joblib.dump(self.image_names, IMAGE_NAME_PATH)
 #                 self.image_names = filenames
                 frame_path = osp.join(self.dataset_path, "information/selected_frames")
-                frame_ids = utils.sort_list(os.listdir(frame_path))
+                frame_ids = helpers.sort_list(os.listdir(frame_path))
                 self.image_names = [osp.join(frame_path, filename) for filename in frame_ids if self.extension in filename]
             elif self.dataset_name == 'V3C':
                 self.image_names = []
-                folder_names = utils.sort_list(os.listdir(self.dataset_path))
+                folder_names = helpers.sort_list(os.listdir(self.dataset_path))
                 for folder in tqdm(folder_names[:10]):
                     folder_path = osp.join(self.dataset_path, folder)
-                    filenames = utils.sort_list(os.listdir(folder_path))
+                    filenames = helpers.sort_list(os.listdir(folder_path))
                     self.image_names.extend([osp.join(folder_path, filename) for filename in filenames if self.extension in filename])
-            utils.save_list_to_txt(self.image_names, self.image_name_path)
+            helpers.save_list_to_txt(self.image_names, self.image_name_path)
 
 # Define the CLIP encoding model class
 class CLIP():
@@ -128,10 +126,10 @@ class CLIP():
 
 
 class CLIPSearchEngine():
-    def __init__(self, dataset_name=DATASET_NAME, src_path='', feature_path='', dataset_path='', image_name_path='', batch_size=16, generate_features=False):
+    def __init__(self, dataset_name='', src_path='', feature_path='', dataset_path='', image_name_path='', batch_size=16, generate_features=False):
         self.dataset_name = dataset_name
         self.src_path = src_path
-        self.dataset = dataset(dataset_name=self.dataset_name, src_path=self.src_path, dataset_path=dataset_path, image_name_path=dataset_path)
+        self.dataset = dataset(dataset_name=self.dataset_name, src_path=self.src_path, dataset_path=dataset_path, image_name_path=image_name_path)
         self.clip_model = CLIP()
         self.feature_dict = {}
         self.features = None
@@ -152,11 +150,11 @@ class CLIPSearchEngine():
                 Dictionary with keys are the image names and values are the embedding vectors
         '''
         # Sort the file name of all images in batch by
-        image_batch = sort_list(image_batch)
+        image_batch = helpers.sort_list(image_batch)
         image_embeddings_dict = defaultdict(list)
         # Load all the images from the files          
         images = [Image.open(image_file) for image_file in image_batch]
-        filenames = [convert_to_concepts(image_file, dataset_name=self.dataset_name)['filename'] for image_file in image_batch]
+        filenames = [helpers.convert_to_concepts(image_file, dataset_name=self.dataset_name)['filename'] for image_file in image_batch]
         # Encode all images
         images_encoded = torch.stack([self.clip_model.encoder(image) for image in images]).to(self.clip_model.device)
         image_embeddings = self.clip_model.encode_images(images_encoded)
@@ -217,7 +215,7 @@ class CLIPSearchEngine():
             print("Load extracted features ...")
             self.load_features()
 
-    @utils.time_this
+    @helpers.time_this
     def load_features(self):
         '''
         Load saved metadata files (encoded features)
@@ -251,7 +249,7 @@ class CLIPSearchEngine():
                 An embedded feature vector with shape (len, 1)
         '''
         if is_image(query):
-            img_query = convert_to_concepts(query, dataset_name=DATASET_NAME)['filename']
+            img_query = helpers.convert_to_concepts(query, dataset_name=self.dataset_name)['filename']
             feature = self.feature_dict[img_query]
             feature_vec = np.expand_dims(feature, axis=0)
             feature_vector = feature_vec.astype('float32')
@@ -305,7 +303,7 @@ class CLIPSearchEngine():
             indices = similarities.argsort()[-num_matches:][::-1]
             best_matched_image_names = [self.dataset.image_names[item] for item in indices]
             
-        result = [convert_to_concepts(item, dataset_name=self.dataset_name) for item in best_matched_image_names]
+        result = [helpers.convert_to_concepts(item, dataset_name=self.dataset_name) for item in best_matched_image_names]
         return result
     
 def display_results(image_list=None, figsize=(15, 15), subplot_size=(5, 3)):
