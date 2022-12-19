@@ -151,3 +151,41 @@ def convert_to_concepts(image_name: str, dataset_name='V3C') -> list:
         shot = components[-1].split('.')[0]
     concepts = {'path': image_name, 'filename': name, 'dataset': dataset_name, 'video': video, 'shot': shot}
     return concepts
+
+def plot_figures(images: List, figsize=(15, 15), subplot_size=(5, 3), savefig=False, fig_name=None, src_path=None):
+    '''
+    Function to plot a list of images
+    params:
+        - images: List
+            A list of images to visualize
+        - figsize: tuple, default=(15, 15)
+            The size of the figure to visualise
+        - subplot_size: tuple, default=(5, 3)
+            The size of the plot to visualise
+        - savefig: bool, default=False
+            Whether to save the figure or not
+        - fig_name: str, default=None
+            Figure name if savefig is True
+        - scr_path: str, default=None
+            The source directory to save the figure
+        
+    '''
+    fig = plt.figure(figsize=figsize)
+    max_len = min(len(images), subplot_size[0]*subplot_size[1])
+
+    for cnt, data in enumerate(images[:max_len]):
+        y = fig.add_subplot(subplot_size[0], subplot_size[1], cnt+1)
+        img = Image.open(data)
+        y.imshow(img)
+        plt.title(data.split('/')[-1])
+        y.axes.get_xaxis().set_visible(False)
+        y.axes.get_yaxis().set_visible(False)
+
+    if savefig:
+        fig.savefig(osp.join(src_path, f'{fig_name}.png'))
+
+def is_image(input_string):
+    extension = input_string.split('.')[-1]
+    if extension == 'png' or extension == 'jpg' or extension == 'jpeg' or extension == 'JPG':
+        return True
+    return False
