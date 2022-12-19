@@ -57,7 +57,9 @@ class dataset():
             print(self.image_name_path)
             # self.image_names = joblib.load(self.image_name_path)
             with open(self.image_name_path, 'r') as file:
-                self.image_names = file.read().splitlines()
+                temp = file.read().splitlines()
+            self.image_names = [osp.join(self.src_path, x) for x in temp]
+            del temp
             
         else:
             print("Getting all image names from the source path ...")
@@ -70,16 +72,17 @@ class dataset():
                 # joblib.dump(self.image_names, IMAGE_NAME_PATH)
 #                 self.image_names = filenames
                 frame_path = osp.join(self.dataset_path, "information/selected_frames")
-                frame_ids = helpers.sort_list(os.listdir(frame_path))
+                frame_ids = helpers.sort_list(os.listdir(osp.join(self.src_path, frame_path)))
                 self.image_names = [osp.join(frame_path, filename) for filename in frame_ids if self.extension in filename]
             elif self.dataset_name == 'V3C':
                 self.image_names = []
-                folder_names = helpers.sort_list(os.listdir(self.dataset_path))
-                for folder in tqdm(folder_names[:10]):
+                folder_names = helpers.sort_list(os.listdir(osp.join(self.src_path, self.dataset_path)))
+                for folder in tqdm(folder_names):
                     folder_path = osp.join(self.dataset_path, folder)
-                    filenames = helpers.sort_list(os.listdir(folder_path))
+                    filenames = helpers.sort_list(os.listdir(osp.join(self.src_path, folder_path)))
                     self.image_names.extend([osp.join(folder_path, filename) for filename in filenames if self.extension in filename])
             helpers.save_list_to_txt(self.image_names, self.image_name_path)
+            self.image_names = [osp.join(self.src_path, x) for x in self.image_names]
 
 # Define the CLIP encoding model class
 class CLIP():
@@ -248,7 +251,7 @@ class CLIPSearchEngine():
             - _:array
                 An embedded feature vector with shape (len, 1)
         '''
-        if is_image(query):
+        if helpers.is_image(query):
             img_query = helpers.convert_to_concepts(query, dataset_name=self.dataset_name)['filename']
             feature = self.feature_dict[img_query]
             feature_vec = np.expand_dims(feature, axis=0)
@@ -320,7 +323,7 @@ def display_results(image_list=None, figsize=(15, 15), subplot_size=(5, 3)):
     if image_list:
 #         try:
         image_ids = [item['path'] for item in image_list]
-        plot_figures(image_ids, figsize=figsize, subplot_size=subplot_size)
+        helpers.plot_figures(image_ids, figsize=figsize, subplot_size=subplot_size)
 #         except:
 #             print('Can\'t find best matched images.')
 

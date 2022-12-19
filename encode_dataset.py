@@ -21,11 +21,11 @@ def main(args):
     print("Dataset name: ", DATASET_NAME)
     # clip = CLIPSearchEngine(src_path=DATASET_MASTER_PATH, feature_path=args.feature_path, batch_size=args.batch_size, generate_features=args.generate_features)
     if DATASET_NAME == 'marine':
-        dataset_path = osp.join(DISK_PATH, VBS_PATH, MARINE_PATH, MARINE_VIDEO_PATH)
+        dataset_path = osp.join(MARINE_PATH, MARINE_VIDEO_PATH)
     elif DATASET_NAME == 'V3C':
-        dataset_path = osp.join(DISK_PATH, VBS_PATH, V3C_KEYFRAME_DATA_PATH, 'keyframes')
-    image_name_path = osp.join(dataset_path, f'{DATASET_NAME}_filenames.txt')
-    # print(image_name_path)
+        dataset_path = osp.join(V3C_KEYFRAME_DATA_PATH, 'keyframes')
+    src_path = osp.join(DISK_PATH, VBS_PATH)
+    image_name_path = osp.join(src_path, f'{DATASET_NAME}_filenames.txt')
 
     clip_model = CLIPSearchEngine(DATASET_NAME, src_path=osp.join(DISK_PATH, VBS_PATH), feature_path=FEATURE_DICT_PATH, generate_features=True, dataset_path=dataset_path, image_name_path=image_name_path)
     clip_model.encode_dataset(entire_dataset=True)
