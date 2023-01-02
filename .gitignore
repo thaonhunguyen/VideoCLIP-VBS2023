@@ -1,4 +1,5 @@
 .ipynb_checkpoints/
+**/tags/
 **/__pycache__/
 **/object_detection/yolov5_models/
 **/object_detection/images/
