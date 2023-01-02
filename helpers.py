@@ -121,7 +121,7 @@ def take(iterable, start, end):
     return list(islice(iterable, start, end))
 
 
-def convert_to_concepts(image_name: str, dataset_name='V3C') -> list:
+def convert_to_concepts(image_name: str, dataset_name='V3C', score=0) -> list:
     '''
     Function to convert a string into the concepts having the detail of each image in VBS dataset
     
@@ -149,7 +149,7 @@ def convert_to_concepts(image_name: str, dataset_name='V3C') -> list:
         # dataset = None
         video = '_'.join(components[:-1])
         shot = components[-1].split('.')[0]
-    concepts = {'path': image_name, 'filename': name, 'dataset': dataset_name, 'video': video, 'shot': shot}
+    concepts = {'path': image_name, 'filename': name, 'dataset': dataset_name, 'video': video, 'shot': shot, score=score}
     return concepts
 
 def plot_figures(images: List, figsize=(15, 15), subplot_size=(5, 3), savefig=False, fig_name=None, src_path=None):

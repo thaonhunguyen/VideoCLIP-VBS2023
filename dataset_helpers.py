@@ -304,9 +304,9 @@ class CLIPSearchEngine():
             # Compute the similarity between the description and each image using the Cosine similarity
             similarities = (feature_vector @ self.features.T).squeeze(0)
             indices = similarities.argsort()[-num_matches:][::-1]
-            best_matched_image_names = [self.dataset.image_names[item] for item in indices]
+            best_matched_image_names = [(self.dataset.image_names[item], similarities[item]) for item in indices]
             
-        result = [helpers.convert_to_concepts(item, dataset_name=self.dataset_name) for item in best_matched_image_names]
+        result = [helpers.convert_to_concepts(item, dataset_name=self.dataset_name, score=score) for item, score in best_matched_image_names]
         return result
     
 def display_results(image_list=None, figsize=(15, 15), subplot_size=(5, 3)):
