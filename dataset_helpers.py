@@ -6,7 +6,7 @@ from collections import defaultdict
 from tqdm import tqdm
 
 import torch
-import pickle
+import pickle5 as pickle
 import clip
 import math
 import joblib
@@ -18,7 +18,7 @@ import pandas as pd
 import helpers
 
 
-# DATASET_NAME = "V3C"
+DATASET_NAME = "V3C"
 # DATASET_NAME = "marine"
 
 MASTER_PATH = "/mnt/4TBSSD/ntnhu/"
