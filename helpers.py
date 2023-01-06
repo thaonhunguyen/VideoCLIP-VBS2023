@@ -91,6 +91,16 @@ def load_json(json_file, is_list=False):
             return json_data
     return json_data[0]
 
+def load_txt(txt_file, splitline=True):
+    with open(txt_file, 'r') as file:
+        if splitline:
+            text_data = file.read().splitlines()
+        else:
+            text_data = file.read()
+    return text_data
+        
+            
+
 
 # def load_xml(xml_file):
 #     with open(xml_file, 'r') as file:
@@ -120,6 +130,17 @@ def take(iterable, start, end):
     "Return items (from start to end) of the iterable as a list"
     return list(islice(iterable, start, end))
 
+def count_objects(concepts) -> dict:
+    output = {}
+    if len(concepts) == 0:
+        return output
+    for concept in concepts:
+        if concept['confidence'] >= 0.35:
+            if concept['name'] not in output:
+                output[concept['name']] = 1
+            else:
+                output[concept['name']] += 1
+    return output
 
 def convert_to_concepts(image_name: str, dataset_name='V3C', score=0) -> list:
     '''

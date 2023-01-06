@@ -1,0 +1,37 @@
+!_TAG_FILE_SORTED	2	/0=unsorted, 1=sorted, 2=foldcase/
+app	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/server.py	/^app = Flask(__name__)$/;"	v	language:Python
+clip	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/server.py	/^clip = CLIPSearchEngine(src_path=DATASET_MASTER_PATH, feature_path=FEATURE_PATH, generate_features=generate_features)$/;"	v	language:Python
+DATASET_MASTER_PATH	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/configs.py	/^    DATASET_MASTER_PATH = '\/mnt\/data\/lsc2022'$/;"	v	language:Python
+DATASET_MASTER_PATH	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/configs.py	/^    DATASET_MASTER_PATH = '\/mnt\/shared_48tb\/vbs\/VBS2022'$/;"	v	language:Python
+DATASET_NAME	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/configs.py	/^    DATASET_NAME = dataset_name$/;"	v	language:Python
+DATASET_NAME	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/configs.py	/^    DATASET_NAME = dataset_name$/;"	v	language:Python
+dataset_name	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/configs.py	/^dataset_name = 'V3C'$/;"	v	language:Python
+EMBEDDING_PATH	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/configs.py	/^    EMBEDDING_PATH = osp.join('\/mnt\/deakin\/lsc2022', 'embedding_features')$/;"	v	language:Python
+EMBEDDING_PATH	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/configs.py	/^    EMBEDDING_PATH = osp.join(DATASET_MASTER_PATH, 'embedding_features')$/;"	v	language:Python
+FEATURE_DICT_PATH	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/configs.py	/^    FEATURE_DICT_PATH = osp.join(EMBEDDING_PATH, f'B32_features_512.pkl')$/;"	v	language:Python
+FEATURE_DICT_PATH	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/configs.py	/^    FEATURE_DICT_PATH = osp.join(EMBEDDING_PATH, f'L14_336_features_128.pkl')$/;"	v	language:Python
+FEATURE_DICT_PATH	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/configs.py	/^    FEATURE_DICT_PATH = osp.join(EMBEDDING_PATH, f'L14_features_512.pkl')$/;"	v	language:Python
+FEATURE_FILENAME_PATH	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/configs.py	/^    FEATURE_FILENAME_PATH = osp.join(EMBEDDING_PATH, f'B32_features_512_filenames.joblib')$/;"	v	language:Python
+FEATURE_FILENAME_PATH	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/configs.py	/^    FEATURE_FILENAME_PATH = osp.join(EMBEDDING_PATH, f'L14_336_features_128_filenames.joblib')$/;"	v	language:Python
+FEATURE_FILENAME_PATH	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/configs.py	/^    FEATURE_FILENAME_PATH = osp.join(EMBEDDING_PATH, f'L14_features_512_filenames.joblib')$/;"	v	language:Python
+FEATURE_PATH	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/configs.py	/^    FEATURE_PATH = osp.join(EMBEDDING_PATH, f'B32_features_512')$/;"	v	language:Python
+FEATURE_PATH	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/configs.py	/^    FEATURE_PATH = osp.join(EMBEDDING_PATH, f'L14_336_features_128')$/;"	v	language:Python
+FEATURE_PATH	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/configs.py	/^    FEATURE_PATH = osp.join(EMBEDDING_PATH, f'L14_features_512')$/;"	v	language:Python
+format_result	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/server.py	/^def format_result(result_entity):$/;"	f	language:Python
+generate_features	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/server.py	/^generate_features = True$/;"	v	language:Python
+get_from_body	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/server.py	/^def get_from_body(body):$/;"	f	language:Python
+get_from_obj	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/server.py	/^def get_from_obj(key, obj, default_value):$/;"	f	language:Python
+group_result	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/server.py	/^def group_result(result):$/;"	f	language:Python
+host	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/server.py	/^    host = os.environ['HOST']$/;"	v	language:Python
+IMAGE_NAME_PATH	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/configs.py	/^    IMAGE_NAME_PATH = osp.join('\/mnt\/deakin\/lsc2022', 'image_names.joblib')$/;"	v	language:Python
+IMAGE_NAME_PATH	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/configs.py	/^    IMAGE_NAME_PATH = osp.join(METADATA_PATH, f'image_names.joblib')$/;"	v	language:Python
+KEYFRAME_PATH	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/configs.py	/^KEYFRAME_PATH = osp.join(DATASET_MASTER_PATH, 'keyframes')$/;"	v	language:Python
+MASTER_PATH	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/configs.py	/^    MASTER_PATH = '\/home\/ntnhu\/projects\/VideoFall-VBS2022'$/;"	v	language:Python
+MASTER_PATH	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/configs.py	/^    MASTER_PATH = '\/mnt\/shared_48tb\/vbs\/VBS2022'$/;"	v	language:Python
+METADATA_PATH	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/configs.py	/^    METADATA_PATH = osp.join('\/mnt\/deakin\/lsc2022', 'metadata')$/;"	v	language:Python
+METADATA_PATH	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/configs.py	/^    METADATA_PATH = osp.join(DATASET_MASTER_PATH, 'metadata')$/;"	v	language:Python
+model_name	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/configs.py	/^model_name = 'L14'$/;"	v	language:Python
+port	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/server.py	/^    port = os.environ['PORT']$/;"	v	language:Python
+search	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/server.py	/^def search():$/;"	f	language:Python
+servertime	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/server.py	/^def servertime():$/;"	f	language:Python
+similar_keyframes	/mnt/4TBSSD/ntnhu/VBS2023/VideoCLIP-VBS2023/server.py	/^def similar_keyframes(video_id, keyframe_id):$/;"	f	language:Python
