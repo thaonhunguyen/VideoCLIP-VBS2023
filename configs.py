@@ -1,48 +1,20 @@
 import os
 import os.path as osp
-from glob import glob
-from tqdm import tqdm
 
-model_name = 'L14'
-# model_name = 'L14_336'
-# model_name = 'B32'
-dataset_name = 'V3C'
-# dataset_name = 'LSC22'
+MASTER_PATH = '/mnt/shared_48tb/vbs'
+EMBEDDING_PATH = osp.join(MASTER_PATH, 'embedding_features')
+MARINE_PATH = "marine"
+MARINE_VIDEO_PATH = "extracted/MarineVideoKit"
+V3C_KEYFRAME_DATA_PATH = "VBS2022"
+V3C1_VIDEO_DATA_PATH = "V3C1_videos"
+V3C2_VIDEO_DATA_PATH = "V3C2_videos"
 
-if dataset_name == 'V3C':
-    DATASET_NAME = dataset_name
-    #MASTER_PATH = '/home/ntnhu/projects/VideoFall-VBS2022'
-    MASTER_PATH = '/mnt/4TBSSD/ntnhu/VideoFall-VBS2022' # DATASET_MASTER_PATH = '/home/SharedFolder/VBS2021/dataset'
-    DATASET_MASTER_PATH = '/mnt/4TBSSD/ntnhu/VideoFall-VBS2022'
-    METADATA_PATH = osp.join(DATASET_MASTER_PATH, 'metadata')
-    EMBEDDING_PATH = osp.join(DATASET_MASTER_PATH, 'embedding_features')
-    IMAGE_NAME_PATH = osp.join(METADATA_PATH, f'image_names.joblib')
-elif dataset_name == 'LSC22':
-    DATASET_NAME = dataset_name
-    MASTER_PATH = '/home/ntnhu/projects/VideoFall-VBS2022'
-    # DATASET_MASTER_PATH = '/home/SharedFolder/VBS2021/dataset'
-    DATASET_MASTER_PATH = '/mnt/data/lsc2022'
-    METADATA_PATH = osp.join('/mnt/deakin/lsc2022', 'metadata')
-    EMBEDDING_PATH = osp.join('/mnt/deakin/lsc2022', 'embedding_features')
-    IMAGE_NAME_PATH = osp.join('/mnt/deakin/lsc2022', 'image_names.joblib')
-    
-# METADATA_PATH = osp.join(DATASET_MASTER_PATH, 'metadata')
-# EMBEDDING_PATH = osp.join(DATASET_MASTER_PATH, 'embedding_features')
-# IMAGE_NAME_PATH = osp.join(METADATA_PATH, f'image_names.joblib')
+V3C_IMAGE_NAME_PATH = osp.join(MASTER_PATH, f'V3C_filenames.txt')
+V3C_DATASET_PATH = osp.join(V3C_KEYFRAME_DATA_PATH, 'keyframes')
+V3C_FEATURE_DICT_PATH = osp.join(EMBEDDING_PATH, f'V3C_L14_336_features_128.pkl')
 
-KEYFRAME_PATH = osp.join(DATASET_MASTER_PATH, 'keyframes')
-if model_name == 'B32':
-    FEATURE_FILENAME_PATH = osp.join(EMBEDDING_PATH, f'B32_features_512_filenames.joblib')
-    FEATURE_DICT_PATH = osp.join(EMBEDDING_PATH, f'B32_features_512.pkl')
-    FEATURE_PATH = osp.join(EMBEDDING_PATH, f'B32_features_512')
-elif model_name == 'L14':
-    FEATURE_FILENAME_PATH = osp.join(EMBEDDING_PATH, f'L14_features_512_filenames.joblib')
-    FEATURE_DICT_PATH = osp.join(EMBEDDING_PATH, f'L14_features_512.pkl')
-    FEATURE_PATH = osp.join(EMBEDDING_PATH, f'L14_features_512')
-elif model_name == 'L14_336':
-    FEATURE_FILENAME_PATH = osp.join(EMBEDDING_PATH, f'L14_336_features_128_filenames.joblib')
-    FEATURE_DICT_PATH = osp.join(EMBEDDING_PATH, f'L14_336_features_128.pkl')
-    FEATURE_PATH = osp.join(EMBEDDING_PATH, f'L14_336_features_128')
 
-if not osp.isdir(FEATURE_PATH):
-    os.mkdir(FEATURE_PATH)
+MARINE_IMAGE_NAME_PATH = osp.join(MASTER_PATH, f'marine_filenames.txt')
+MARINE_DATASET_PATH = osp.join(MARINE_PATH, MARINE_VIDEO_PATH)
+MARINE_FEATURE_DICT_PATH = osp.join(EMBEDDING_PATH, f'marine_L14_336_features_128.pkl')
+
