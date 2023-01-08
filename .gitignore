@@ -1,5 +1,6 @@
 .ipynb_checkpoints/
 .env
+server_old.py
 tags/
 **/__pycache__/
 **/object_detection/yolov5_models/

@@ -1,5 +1,6 @@
 import sys
 from dotenv import load_dotenv
+from helpers import convert_to_concepts
 load_dotenv()
 from dataset_helpers import *
 import matplotlib.pyplot as plt
@@ -12,10 +13,12 @@ generate_features = False
 
 v3c_clip = CLIPSearchEngine('V3C', src_path=MASTER_PATH, feature_path=V3C_FEATURE_DICT_PATH, generate_features=generate_features, dataset_path=V3C_DATASET_PATH, image_name_path=V3C_IMAGE_NAME_PATH)
 v3c_clip.dataset.get_file_name()
+print('loading v3c features', file=sys.stdout)
 v3c_clip.load_features()
 
 marine_clip = CLIPSearchEngine('marine', src_path=MASTER_PATH, feature_path=MARINE_FEATURE_DICT_PATH, generate_features=generate_features, dataset_path=MARINE_DATASET_PATH, image_name_path=MARINE_IMAGE_NAME_PATH)
 marine_clip.dataset.get_file_name()
+print('loading marine features', file=sys.stdout)
 marine_clip.load_features()
 
 # with open("feature_dict.pkl", "rb") as a_file:
@@ -39,6 +42,7 @@ def format_result(result_entity):
     """
     return {
         # "path": result_entity['path'],
+        'score': "{:.4f}".format(result_entity['score']),
         "video": result_entity['video'],
         "shot": result_entity['shot'],
         # "id": result_entity['filename'],
@@ -85,7 +89,6 @@ def search():
     if dataset == 'V3C':
         best_images = v3c_clip.search_query(query, num_matches=total * 3, ss_type='other')
     elif dataset == 'MARINE':
-        print('loading marine features', file=sys.stdout)
         best_images = marine_clip.search_query(query, num_matches=total * 3, ss_type='other')
         # print(best_images[:10], file=sys.stdout)
     return {
@@ -112,24 +115,25 @@ def similar_keyframes(dataset, video_id, keyframe_id):
         feature_vector = feature_vec.astype('float32')
         similarities = (feature_vector @ v3c_clip.features.T).squeeze(0)
         indices = similarities.argsort()[-50:][::-1]
-        best_matched_image_names = [v3c_clip.dataset.image_names[item] for item in indices]
+        best_matched_image_names = [(v3c_clip.dataset.image_names[item], similarities[item]) for item in indices]
 
-        result = [convert_to_concepts(item, dataset_name=v3c_clip.dataset_name) for item in best_matched_image_names]
+        result = [convert_to_concepts(item, dataset_name=v3c_clip.dataset_name, score=score) for item, score in best_matched_image_names]
     
     ## TO DO: change to marine dataset
     elif dataset == 'MARINE':
         
-        img_query = f'{video_id}_{keyframe_id}.jpg'
+        img_query = f'{video_id}_{keyframe_id}'
         feature = marine_clip.feature_dict[img_query]
         feature_vec = np.expand_dims(feature, axis=0)
         feature_vector = feature_vec.astype('float32')
         similarities = (feature_vector @ marine_clip.features.T).squeeze(0)
         indices = similarities.argsort()[-50:][::-1]
-        best_matched_image_names = [marine_clip.dataset.image_names[item] for item in indices]
+        best_matched_image_names = [(marine_clip.dataset.image_names[item], similarities[item]) for item in indices]
 
-        result = [convert_to_concepts(item, dataset_name=marine_clip.dataset_name) for item in best_matched_image_names]
+        result = [convert_to_concepts(item, dataset_name=marine_clip.dataset_name, score=score) for item, score in best_matched_image_names]
+        
     return {
-        "result": group_result(list(map(format_result, result[:1000]))),
+        "result": list(map(format_result, result[:1000])),
     }
     
     
