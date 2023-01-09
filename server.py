@@ -84,7 +84,7 @@ def elastic_filtering(query):
         'video', 
         'path'
     ]
-    rank_list = es_processor.search(query)['hits']
+    rank_list = es_processor.search(query, continuous_query=True)['hits']
     for item in rank_list['hits']:
         res = dict()
         for param in return_params:
@@ -109,7 +109,8 @@ def search():
         #try:
         filter_query = {'ocr': ocr,
                  'color': colors}
-        fitlering_result = elastic_filtering(filter_query)
+        # print(filter_query, file=sys.stdout)
+        filtering_result = elastic_filtering(filter_query)
         subset = [item['path'] for item in filtering_result]
         #except:
         #    print('Elastic Filtering failed!')

@@ -67,9 +67,11 @@ class QueryGenerator:
     def gen_matching_query(self, field, values, optional=True):
         pattern = {"match": {field: values}}
         if optional:
-            self.SHOULD.append(pattern)
+            if pattern not in self.SHOULD:
+                self.SHOULD.append(pattern)
         else: 
-            self.MUST.append(pattern)
+            if pattern not in self.MUST:
+                self.MUST.append(pattern)
 
 
     def gen_filtering_query(self, field, values):
@@ -117,7 +119,7 @@ class QueryAnalyser:
                 "color": 8
             }
             optionals = {
-                "ocr": True,
+                "ocr": False,
                 "color": False
             }
             # self.generator.gen_multi_matching_query(fields_weight, text_query, auto_fill=True)
@@ -127,7 +129,11 @@ class QueryAnalyser:
     @time_this
     def analyse(self, text_query, mode="basic"):
         for field in text_query:
-            self.match_all(text_query[field], field)
+            if isinstance(text_query[field], list):
+                for i in range(len(text_query[field])):
+                    self.match_all(text_query[field][i], field) 
+            else:
+                self.match_all(text_query[field], field)
             
             
 ############## PROCESSOR ###################
@@ -168,7 +174,7 @@ class Processor:
         if not continuous_query:
             self.generator.reset_query()
         # text_query['ocr'], text_query['color']
-        self.analyser.analyse(text_query, mode)
+        self.analyser.analyse(text_query)
         query = self.generator.run()
         result = self.es.search(index=ELASTIC_INDEX, body=json.dumps(query), size=size)
         return result
