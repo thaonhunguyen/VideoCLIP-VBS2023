@@ -206,7 +206,16 @@ def plot_figures(images: List, figsize=(15, 15), subplot_size=(5, 3), savefig=Fa
         fig.savefig(osp.join(src_path, f'{fig_name}.png'))
 
 def is_image(input_string):
-    extension = input_string.split('.')[-1]
-    if extension == 'png' or extension == 'jpg' or extension == 'jpeg' or extension == 'JPG':
-        return True
-    return False
+    try:
+        extension = input_string.split('.')[-1]
+        if extension == 'png' or extension == 'jpg' or extension == 'jpeg' or extension == 'JPG':
+            return True
+        return False
+    except:
+        return False
+
+# def format_image_path(path, old_path, new):
+#     # Replace prefix
+#     new_path = path.replace(ELASTIC_IMAGE_PATH_PREFIX, ONLINE_IMAGE_SERVICE_PREFIX)
+#     # Fix duplicate images
+#     return new_path

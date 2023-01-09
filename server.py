@@ -8,23 +8,25 @@ from PIL import Image
 import numpy as np 
 import time
 from configs import *
+from elastic_processor import es_processor
 
 generate_features = False
 
+## Load V3C features
 v3c_clip = CLIPSearchEngine('V3C', src_path=MASTER_PATH, feature_path=V3C_FEATURE_DICT_PATH, generate_features=generate_features, dataset_path=V3C_DATASET_PATH, image_name_path=V3C_IMAGE_NAME_PATH)
 v3c_clip.dataset.get_file_name()
 print('loading v3c features', file=sys.stdout)
 v3c_clip.load_features()
 
+## Load marine features
 marine_clip = CLIPSearchEngine('marine', src_path=MASTER_PATH, feature_path=MARINE_FEATURE_DICT_PATH, generate_features=generate_features, dataset_path=MARINE_DATASET_PATH, image_name_path=MARINE_IMAGE_NAME_PATH)
 marine_clip.dataset.get_file_name()
 print('loading marine features', file=sys.stdout)
 marine_clip.load_features()
 
-# with open("feature_dict.pkl", "rb") as a_file:
-#     print('Loading Feature Dict', file=sys.stdout)
-#     clip.feature_dict = pickle.load(a_file)
-#     a_file.close()
+## Connect Elastic server
+#es_processor = Processor(ELASTIC_HOST, ELASTIC_PORT)
+#es_processor.connect()
 
 from flask import Flask, request
 
@@ -75,6 +77,21 @@ def group_result(result):
     results = sorted(results, key=lambda x: x[0], reverse=True)
     return list(map(lambda x: x[1], results))
 
+def elastic_filtering(query):
+    result = []
+    return_params = [
+        'idx', #: '/mnt/shared_48tb/vbs/VBS2022/keyframes/09106/shot09106_25_RKF.png',
+        'video', 
+        'path'
+    ]
+    rank_list = es_processor.search(query)['hits']
+    for item in rank_list['hits']:
+        res = dict()
+        for param in return_params:
+            res[param] = item['_source'][param]
+        result.append(res)
+    return result
+
 @app.route('/api/search', methods=['POST'])
 def search():
     body = request.get_json()
@@ -86,8 +103,21 @@ def search():
     metas = body_value('metas', [])
     dataset = body_value('dataset', 'V3C') 
     total = body_value('total', 100)
+    subset = None
+    ## Elastic search for filtering color and ocr
+    if len(colors) != 0 or len(ocr) != 0:
+        #try:
+        filter_query = {'ocr': ocr,
+                 'color': colors}
+        fitlering_result = elastic_filtering(filter_query)
+        subset = [item['path'] for item in filtering_result]
+        #except:
+        #    print('Elastic Filtering failed!')
+    else:
+        pass
+    
     if dataset == 'V3C':
-        best_images = v3c_clip.search_query(query, num_matches=total * 3, ss_type='other')
+        best_images = v3c_clip.search_query(query, num_matches=total * 3, ss_type='other', subset=subset)
     elif dataset == 'MARINE':
         best_images = marine_clip.search_query(query, num_matches=total * 3, ss_type='other')
         # print(best_images[:10], file=sys.stdout)
