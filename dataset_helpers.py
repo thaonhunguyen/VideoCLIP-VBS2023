@@ -263,7 +263,7 @@ class CLIPSearchEngine():
         
         return feature_vector
         
-    def search_query(self, query: str, num_matches=500, nlist=10, ss_type='faiss') -> List:
+    def search_query(self, query: str, num_matches=500, nlist=10, ss_type='faiss', subset=None) -> List:
         '''
         Function to search for target images giving an input query
         
@@ -289,17 +289,16 @@ class CLIPSearchEngine():
         # Encode the input query into feature vector
         feature_vector = self.encode_input_query(query)
         
-        if ss_type == 'faiss':
-            pass
-            #dimension = self.features.shape[1]
-            ## Initialise faiss searching object
-            #quantiser = faiss.IndexFlatL2(dimension)  
-            #index = faiss.IndexIVFFlat(quantiser, dimension, nlist, faiss.METRIC_L2)
-            #index.train(self.features) 
-            #index.add(self.features)  
-            ## Calculate the distances of the text vectors 
-            #distances, indices = index.search(feature_vector, num_matches)
-            #best_matched_image_names = [self.dataset.image_names[item] for item in indices[0]]
+        if subset:
+            image_indices = [name.split('/')[-1] for name in subset]
+            image_features = [self.feature_dict[idx] for idx in image_indices]
+            sub_image_features = np.asarray([*image_features]).astype('float32')
+            
+            # Compute the similarity between the description and each image using the Cosine similarity
+            similarities = list((feature_vector @ sub_image_features.T).squeeze(0))
+            # # Sort the images by their similarity scores
+            indices = sorted(zip(similarities, range(sub_image_features.shape[0])), key=lambda x: x[0], reverse=True)
+            best_matched_image_names = [(subset[item], similarities[item]) for item in [idx[1] for idx in indices]]
         else:
             # Compute the similarity between the description and each image using the Cosine similarity
             similarities = (feature_vector @ self.features.T).squeeze(0)
